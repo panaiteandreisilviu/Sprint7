@@ -1,0 +1,7 @@
+{
+  "generator-react-webpack": {
+    "appName": "tilesGame",
+    "style": "css",
+    "postcss": false
+  }
+}
