@@ -9,7 +9,7 @@ var App = React.createClass({
   render: function () {
     return (
       <div>
-        <Board tiles={5} size={600}/>
+        <Board tiles={10} size={500}/>
       </div>);
   }
 
@@ -68,6 +68,8 @@ var Board = React.createClass({
         <div className="board" style={boardStyle}>
           {tiles}
         </div>
+        <button onClick={this.shuffleTiles}>Shuffle</button>
+        <button onClick={this.solveGame}>Solve</button>
       </div>);
   },
 
@@ -81,6 +83,25 @@ var Board = React.createClass({
     this.state.board[index].pos = this.state.emptyPos;
     this.state.emptyPos = obj;
     this.forceUpdate();
+  },
+
+  shuffleTiles: function () {
+    let tiles = this.state.board;
+    let tilesPerLine = this.state.tilesPerLine;
+    let totalTiles = tilesPerLine * tilesPerLine - 1;
+    for (let i = 0; i < Math.floor(totalTiles / 2); i++) {
+      let firstTile = Math.floor(Math.random() * totalTiles);
+      let secondTile = Math.floor(Math.random() * totalTiles);
+      console.log(firstTile, secondTile);
+      let pos = tiles[firstTile].pos;
+      tiles[firstTile].pos = tiles[secondTile].pos;
+      tiles[secondTile].pos = pos;
+    }
+    this.setState({board: tiles})
+  },
+
+  solveGame: function () {
+    setInterval(this.shuffleTiles, 500);
   },
 
   isValidMove: function (startPos, targetPos) {
@@ -109,8 +130,7 @@ var Tile = React.createClass({
     var startPos = this.props.startPosition;
     var cellSize = this.props.cellSize;
     var boardSize = this.props.sizeOfBoard;
-    console.log(this.state);
-    var background = 'url(\'http://i.imgur.com/yfdOju1.jpg\') no-repeat';
+    var background = 'url(\'http://i.imgur.com/Ebm08JL.jpg\') no-repeat';
     var backgroundPosition = ' -' + startPos.x + 'px' + ' -' + startPos.y + 'px';
     var style = {
       left: pos.x,
