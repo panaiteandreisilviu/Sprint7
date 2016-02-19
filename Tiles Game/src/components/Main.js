@@ -9,7 +9,7 @@ var App = React.createClass({
   render: function () {
     return (
       <div>
-        <Board tiles={10} size={500}/>
+        <Board tiles={20} size={700}/>
       </div>);
   }
 
@@ -70,13 +70,14 @@ var Board = React.createClass({
         </div>
         <button onClick={this.shuffleTiles}>Shuffle</button>
         <button onClick={this.solveGame}>Solve</button>
+        <button onClick={function(){console.log(this.checkWinState());}.bind(this)}>Check Win</button>
       </div>);
   },
 
   onTileClick: function (index) {
     var isValidMove = this.isValidMove(this.state.board[index].pos, this.state.emptyPos);
     if (!isValidMove) {
-      return alert('Invalid Move');
+      return console.log('Invalid Move');
     }
     var obj = {};
     obj = this.state.board[index].pos;
@@ -101,7 +102,27 @@ var Board = React.createClass({
   },
 
   solveGame: function () {
-    setInterval(this.shuffleTiles, 500);
+    var timerID = setInterval(function () {
+      this.shuffleTiles();
+      console.log(this.checkWinState());
+      if (this.checkWinState()) {
+        clearInterval(timerID);
+      }
+    }.bind(this), 250);
+  },
+
+  checkTile: function (tile) {
+    return (tile.pos.x === tile.firstPos.x && tile.pos.y === tile.firstPos.y);
+  },
+
+  checkWinState: function () {
+    let tiles = this.state.board;
+    for (let i = 0; i < tiles.length; i++) {
+      if (!this.checkTile(tiles[i])) {
+        return false;
+      }
+    }
+    return true;
   },
 
   isValidMove: function (startPos, targetPos) {
@@ -110,6 +131,9 @@ var Board = React.createClass({
     var diff = sizeOfBoard / tilesPerLine;
     var diffX = Math.abs(targetPos.x - startPos.x);
     var diffY = Math.abs(targetPos.y - startPos.y);
+    diffX = Math.round(diffX);
+    diffY = Math.round(diffY);
+    diff = Math.round(diff);
     var validX = diffX === diff && diffY === 0;
     var validY = diffY === diff && diffX === 0;
 
@@ -120,7 +144,6 @@ var Board = React.createClass({
 });
 
 var Tile = React.createClass({
-
   onClick: function () {
     this.props.onClick(this.props.index)
   },
