@@ -1,5 +1,6 @@
 body {
   background-image: url('../images/blue-background.jpg');
+  -webkit-user-select: none;
 }
 
 .rectangle {
@@ -75,10 +76,15 @@ body {
   box-sizing: border-box;
   background-image: url('../images/blue-background.jpg');
   border: 2px solid #cccccc;
+  color: white;
   height: 30px;
   width: 30px;
+  line-height: 30px;
+  text-align: center;
+  font-weight: bold;
   border-radius: 50%;
   z-index: 100;
+  cursor: pointer;
   transition: border .1s ease-in-out;
   box-shadow: inset 2px 2px 2px 2px black;
 }
@@ -91,10 +97,8 @@ body {
   margin-left: 600px;
   color: #f3f3f3;
   margin-top: 60px;
-  width: 20%;
   text-align: center;
-  padding: 10px;
-  font-size: 20px;
+  padding: 5px;
   box-shadow: inset 2px 2px 2px 2px #000000;
   background-color: rgba(40, 40, 40, 0.48);
   display: inline-block;

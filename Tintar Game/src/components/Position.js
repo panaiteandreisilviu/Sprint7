@@ -17,9 +17,11 @@ class Position extends React.Component {
     let style = this.props.posData;
     if (this.props.owner !== null) {
       style.background = this.props.owner == '1' ? '#555555' : '#f3f3f3';
+      style.color = this.props.owner == '1' ? 'white' : 'black';
     }
     return (
       <div className='tile' onClick={this.setStyle.bind(this)} style={style}>
+        {this.props.index}
       </div>
     );
   }
