@@ -9,7 +9,7 @@ var App = React.createClass({
   render: function () {
     return (
       <div>
-        <Board tiles={20} size={700}/>
+        <Board tiles={3} size={500}/>
       </div>);
   }
 

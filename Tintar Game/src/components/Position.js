@@ -10,15 +10,16 @@ class Position extends React.Component {
   }
 
   setStyle() {
-    this.state.style.backgroundColor = 'black';
-    this.forceUpdate();
+    this.props.myFunc(this.props.index);
   }
 
   render() {
     let style = this.props.posData;
-    this.state = {style};
+    if (this.props.owner !== null) {
+      style.background = this.props.owner == '1' ? '#555555' : '#f3f3f3';
+    }
     return (
-      <div className='tile' onClick={this.setStyle.bind(this)} style={this.state.style}>
+      <div className='tile' onClick={this.setStyle.bind(this)} style={style}>
       </div>
     );
   }

@@ -2,16 +2,33 @@ require('normalize.css');
 require('styles/App.css');
 
 import React from 'react';
-import Position from './Position'
+import Position from './Position';
+import GameEngine from './GameEngine'
+import RemainingPositions from './RemainingPositions'
 
 class Board extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {posData: this._calculatePosData()}
+    this.state = {
+      posData: this._calculatePosData(),
+      boardArray: this._generateBoardArray(),
+      gamePhase: 'Phase I',
+      playerOneMustMove: false,
+      remainingPositions: [9, 9]
+    }
   }
 
   _arrayContainsValue(array, value) {
     return array.indexOf(value) > -1;
+  }
+
+  _generateBoardArray() {
+    let board = [];
+    for (let i = 0; i < 24; i++) {
+      board.push(null);
+    }
+
+    return board;
   }
 
   _getX(index, offset) {
@@ -24,7 +41,7 @@ class Board extends React.Component {
     }
 
     else if (this._arrayContainsValue([1, 5, 9, 13, 17, 21], index)) {
-      return offset + 250;
+      return offset + 252;
     }
 
     else if (this._arrayContainsValue([16, 22, 23], index)) {
@@ -78,14 +95,67 @@ class Board extends React.Component {
     for (let i = 0; i < 24; i++) {
       let position = {left: this._getX(i, offset.x), top: this._getY(i, offset.y), index: i};
       posData.push(position);
-      console.log(position);
     }
     return posData;
   }
 
+  positionClicked(index) {
+    if (this.state.boardArray[index] == null && this.state.gamePhase != 'Phase II') {
+      let player = this.state.playerOneMustMove;
+      this.state.playerOneMustMove = !this.state.playerOneMustMove;
+      this.state.boardArray[index] = player ? 1 : -1;
+      this.state.getRemaining = this.getRemaining();
+      this.forceUpdate();
+    }
+
+    else if (this.state.gamePhase == 'Phase II') {
+      console.log(this);
+    }
+  }
+
+  checkRemaining() {
+    return this.state.remainingPositions[0] + this.state.remainingPositions[1] > 0;
+  }
+
+
+  getRemaining() {
+    if (this.checkRemaining()) {
+      if (this.state.playerOneMustMove) {
+        this.state.remainingPositions[0]--;
+      }
+      else {
+        this.state.remainingPositions[1]--;
+      }
+    }
+    if (!this.checkRemaining()) {
+      this.setState({gamePhase: 'Phase II'});
+    }
+
+    this.forceUpdate();
+  }
+
+
   render() {
     let posData = this.state.posData;
-    let positions = posData.map((posData, index) => <Position key={index} posData={posData} className="tile"/>);
+    let gameInformationStyle;
+    let gamePhaseStyle;
+    let positions = posData.map((posData, index) => <Position key={index} owner={this.state.boardArray[index]}
+                                                              index={index}
+                                                              posData={posData}
+                                                              myFunc={this.positionClicked.bind(this)}
+                                                              className="tile"/>);
+    if (this.state.gamePhase == 'Phase II') {
+      gameInformationStyle = {background: 'rgba(28 , 54 , 77 , 0.70)', color: '#f5f5f5'};
+      gamePhaseStyle = {'fontWeight': 'bold'};
+    }
+
+
+    let grayPositions = [];
+    for (let i = 0; i < this.state.remainingPositions[0]; i++) {
+      let pos = <RemainingPositions key={i} color="#555555"/>;
+      grayPositions.push(pos);
+    }
+
     return (
       <div>
         <div className='rectangle outerRectangle'></div>
@@ -97,8 +167,19 @@ class Board extends React.Component {
         <div className="rectangle cornerRectangleBottomRight"></div>
         {positions}
         <div id="test"></div>
+        <div className="gameInformation" style={gameInformationStyle}>
+          <p style={gamePhaseStyle}>{this.state.gamePhase}</p>
+          <p>{this.state.playerOneMustMove ? 'Current Player : Gray' : 'Current Player: White'}</p>
+          <p>{'Gray: ' + this.state.remainingPositions[0]}</p>
+          <p>{'White: ' + this.state.remainingPositions[1]}</p>
+
+
+        </div>
       </div>);
   }
 }
 
-export default Board;
+
+export
+default
+Board;
