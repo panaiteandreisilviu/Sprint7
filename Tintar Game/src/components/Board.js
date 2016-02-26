@@ -137,7 +137,6 @@ class Board extends React.Component {
 
   }
 
-
   checkRemaining() {
     return this.state.remainingPositions[0] + this.state.remainingPositions[1] > 0;
   }
