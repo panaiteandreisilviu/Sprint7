@@ -9,19 +9,20 @@ class Position extends React.Component {
     super(props);
   }
 
-  setStyle() {
-    this.props.myFunc(this.props.index);
+  onClickFunc() {
+    this.props.positionClicked(this.props.index);
   }
 
   render() {
     let style = this.props.posData;
     if (this.props.owner !== null) {
-      style.background = this.props.owner == '1' ? '#555555' : '#f3f3f3';
+      style.background = this.props.owner == '1' ? 'black' : '#f3f3f3';
       style.color = this.props.owner == '1' ? 'white' : 'black';
+      style.boxShadow = 'rgba(47, 47, 47 , 0.8) 1px 1px 5px 2px';
+      style.border = '0';
     }
     return (
-      <div className='tile' onClick={this.setStyle.bind(this)} style={style}>
-        {this.props.index}
+      <div className='tile' onClick={this.onClickFunc.bind(this)} style={style}>
       </div>
     );
   }

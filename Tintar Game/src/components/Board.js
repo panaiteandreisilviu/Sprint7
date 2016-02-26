@@ -23,7 +23,7 @@ class Board extends React.Component {
   }
 
   _generateBoardArray() {
-    let board = [];
+    const board = [];
     for (let i = 0; i < 24; i++) {
       board.push(null);
     }
@@ -90,7 +90,7 @@ class Board extends React.Component {
   }
 
   _calculatePosData() {
-    let posData = [];
+    const posData = [];
     let offset = {x: 35, y: 35};
     for (let i = 0; i < 24; i++) {
       let position = {left: this._getX(i, offset.x), top: this._getY(i, offset.y), index: i};
@@ -105,13 +105,38 @@ class Board extends React.Component {
       this.state.playerOneMustMove = !this.state.playerOneMustMove;
       this.state.boardArray[index] = player ? 1 : -1;
       this.state.getRemaining = this.getRemaining();
+      this.state.grayPositions = this.getRemainingPositions('one');
+      this.state.whitePositions = this.getRemainingPositions('two');
       this.forceUpdate();
     }
 
+
     else if (this.state.gamePhase == 'Phase II') {
-      console.log(this);
+      console.log(this.state)
     }
   }
+
+  getRemainingPositions(player) {
+    if (player === 'one') {
+      let grayPositions = [];
+      for (let i = 0; i < this.state.remainingPositions[1]; i++) {
+        let pos = <div key={i} className="tile remainingTilesGray"></div>;
+        grayPositions.push(pos);
+      }
+      return grayPositions;
+    }
+
+    if (player === 'two') {
+      let whitePositions = [];
+      for (let i = 0; i < this.state.remainingPositions[0]; i++) {
+        let pos = <div key={i} className="tile remainingTilesWhite"></div>;
+        whitePositions.push(pos);
+      }
+      return whitePositions;
+    }
+
+  }
+
 
   checkRemaining() {
     return this.state.remainingPositions[0] + this.state.remainingPositions[1] > 0;
@@ -137,23 +162,38 @@ class Board extends React.Component {
 
   render() {
     let posData = this.state.posData;
-    let gameInformationStyle;
     let gamePhaseStyle;
+    let playerStyle;
+    let defaultPlayerStyle = {
+      backgroundSize: 'contain',
+      height: 40,
+      width: 200,
+      margin: '0 auto'
+    };
+
+    let defaultGamePhaseStyle = {
+      backgroundSize: 'contain',
+      height: 40,
+      width: 195,
+      margin: '0 auto'
+    };
+
+
     let positions = posData.map((posData, index) => <Position key={index} owner={this.state.boardArray[index]}
                                                               index={index}
                                                               posData={posData}
-                                                              myFunc={this.positionClicked.bind(this)}
+                                                              positionClicked={this.positionClicked.bind(this)}
                                                               className="tile"/>);
-    if (this.state.gamePhase == 'Phase II') {
-      gameInformationStyle = {background: 'rgba(28 , 54 , 77 , 0.70)', color: '#f5f5f5'};
-      gamePhaseStyle = {'fontWeight': 'bold'};
+    if (this.state.gamePhase == 'Phase I') {
+      gamePhaseStyle = Object.assign({}, {backgroundImage: 'url(\'../images/Phase-One.png\')'}, defaultGamePhaseStyle);
+    } else {
+      gamePhaseStyle = Object.assign({}, {backgroundImage: 'url(\'../images/Phase-Two.png\')'}, defaultGamePhaseStyle);
     }
 
-
-    let grayPositions = [];
-    for (let i = 0; i < this.state.remainingPositions[0]; i++) {
-      let pos = <RemainingPositions key={i} color="#555555"/>;
-      grayPositions.push(pos);
+    if (this.state.playerOneMustMove) {
+      playerStyle = Object.assign({}, {backgroundImage: 'url(\'../images/White-Turn.png\')'}, defaultPlayerStyle);
+    } else {
+      playerStyle = Object.assign({}, {backgroundImage: 'url(\'../images/Gray-Turn.png\')'}, defaultPlayerStyle);
     }
 
     return (
@@ -167,19 +207,16 @@ class Board extends React.Component {
         <div className="rectangle cornerRectangleBottomRight"></div>
         {positions}
         <div id="test"></div>
-        <div className="gameInformation" style={gameInformationStyle}>
-          <p style={gamePhaseStyle}>{this.state.gamePhase}</p>
-          <p>{this.state.playerOneMustMove ? 'Current Player : Gray' : 'Current Player: White'}</p>
-          <p>{'Gray: ' + this.state.remainingPositions[0]}</p>
-          <p>{'White: ' + this.state.remainingPositions[1]}</p>
-
-
+        <div className="gameInformation rectangle">
+          <div className="logo"></div>
+          <p style={gamePhaseStyle}>{}</p>
+          <p style={playerStyle}>{}</p>
+          <p>{this.state.grayPositions}</p>
+          <p>{this.state.whitePositions}</p>
         </div>
       </div>);
   }
 }
 
 
-export
-default
-Board;
+export default Board;
